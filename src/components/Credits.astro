@@ -1,0 +1,167 @@
+---
+import { filmography, recognition, training } from '../data/site';
+// Hide the Year / Director columns until at least one value is confirmed
+const showYear = filmography.some((f) => f.year);
+const showDirector = filmography.some((f) => f.director);
+const laurels = recognition.filter((r) => r.show);
+---
+
+<section class="credits section container" id="credits" data-section>
+  <p class="eyebrow">Act IV — Credits</p>
+  <h2 class="h2 credits__title">Filmography</h2>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Filmography table">
+    <table>
+      <thead class="mono">
+        <tr>
+          {showYear && <th scope="col">Year</th>}
+          <th scope="col">Title</th>
+          {showDirector && <th scope="col">Director</th>}
+          <th scope="col">Format</th>
+          <th scope="col">Todimu’s role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filmography.map((f) => (
+          <tr>
+            {showYear && <td class="mono accent">{f.year || '—'}</td>}
+            <th scope="row" class="display">{f.title}</th>
+            {showDirector && <td>{f.director || '—'}</td>}
+            <td>{f.format}</td>
+            <td>{f.role}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="eyebrow eyebrow--dim credits__sub">Recognition &amp; industry milestones</h3>
+  <ul class="laurels">
+    {laurels.map((r, i) => (
+      <li data-reveal style={`--d:${(i % 3) * 0.08}s`}>
+        <p class="mono laurels__label">{r.label}</p>
+        <p class="laurels__title">{r.title}</p>
+        <p class="laurels__text">{r.text}</p>
+      </li>
+    ))}
+  </ul>
+
+  <h3 class="eyebrow eyebrow--dim credits__sub">Professional training &amp; education</h3>
+  <ol class="training">
+    {training.map((t) => (
+      <li>
+        <span class="mono accent">{t.year || '—'}</span>
+        <strong>{t.title}</strong>
+        <span>{t.text}</span>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .credits__title {
+    margin-bottom: 48px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: 15px;
+    text-align: left;
+  }
+  thead th {
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid var(--line-3);
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  tbody th,
+  tbody td {
+    padding: 20px 16px 20px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    vertical-align: baseline;
+  }
+  tbody th {
+    width: 28%;
+    font-size: 22px;
+    color: var(--text);
+  }
+  tbody tr {
+    transition: background 0.25s;
+  }
+  tbody tr:hover {
+    background: rgba(204, 85, 0, 0.04);
+  }
+  .credits__sub {
+    margin: 80px 0 24px;
+  }
+  .laurels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+  }
+  .laurels li {
+    border: 1px solid var(--line-2);
+    padding: 28px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .laurels li:hover {
+    border-color: var(--accent);
+  }
+  .laurels p {
+    margin: 0;
+  }
+  .laurels__label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .laurels__title {
+    margin-top: 10px !important;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .laurels__text {
+    margin-top: 8px !important;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .training {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2 420px;
+    column-gap: 48px;
+  }
+  .training li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 2px 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    break-inside: avoid;
+  }
+  .training .mono {
+    grid-row: span 2;
+    font-size: 12px;
+  }
+  .training strong {
+    font-weight: 600;
+  }
+  .training span:last-child {
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>

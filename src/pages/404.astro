@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Scene missing — 404">
+  <section class="lost container section">
+    <p class="eyebrow">Error 404 · Scene not found</p>
+    <h1 class="display lost__title">Cut<span class="accent">.</span></h1>
+    <p class="lead">This shot didn’t make the final edit.</p>
+    <a href="/" class="btn btn--accent">Back to the start →</a>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .lost__title {
+    font-size: clamp(120px, 22vw, 300px);
+    line-height: 0.85;
+  }
+</style>

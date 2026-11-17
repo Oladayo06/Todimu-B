@@ -1,0 +1,106 @@
+---
+import { services, kit, craftStatement } from '../data/site';
+---
+
+<section class="services container" aria-labelledby="services-title">
+  <div class="services__main">
+    <p class="eyebrow eyebrow--dim" id="services-title">What I do</p>
+    <ul class="svc">
+      {services.map((s, i) => (
+        <li data-reveal style={`--d:${(i % 2) * 0.08}s`}>
+          <span class="mono accent">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="display">{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="services__kit">
+    <p class="eyebrow eyebrow--dim">The kit</p>
+    <dl class="kit">
+      {kit.map((k) => (
+        <div>
+          <dt>{k.label}</dt>
+          <dd>{k.value}</dd>
+        </div>
+      ))}
+    </dl>
+    <p class="kit__statement">{craftStatement}</p>
+  </div>
+</section>
+
+<style>
+  .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    padding-bottom: var(--section);
+  }
+  .services__main {
+    flex: 2 1 560px;
+  }
+  .services__kit {
+    flex: 1 1 320px;
+  }
+  .svc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 1px;
+    background: var(--line-2);
+    border: 1px solid var(--line-2);
+  }
+  .svc li {
+    background: var(--bg);
+    padding: 28px;
+    transition: background 0.3s;
+  }
+  /* odd number of cards: last one spans the full row, no empty cell */
+  .svc li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  .svc li:hover {
+    background: var(--bg-2);
+  }
+  .svc .mono {
+    font-size: 12px;
+  }
+  .svc h3 {
+    margin: 10px 0;
+    font-size: 26px;
+    line-height: 1.05;
+  }
+  .svc p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .kit {
+    margin: 0;
+    font-size: 15px;
+  }
+  .kit div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .kit dt {
+    flex: none;
+    color: var(--dim);
+  }
+  .kit dd {
+    margin: 0;
+    text-align: right;
+    max-width: 65%;
+  }
+  .kit__statement {
+    margin: 28px 0 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+</style>

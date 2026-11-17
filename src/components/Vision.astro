@@ -1,0 +1,178 @@
+---
+import { site, vision, reel } from '../data/site';
+import Media from './Media.astro';
+---
+
+<section class="vision section container" id="vision" data-section>
+  <p class="eyebrow vision__eyebrow">Act I — Vision</p>
+  <div class="vision__grid">
+    <div class="vision__left">
+      <h2 class="h2" data-reveal>{vision.headline} <span class="vision__muted">{vision.headlineMuted}</span></h2>
+      <p class="lead vision__text" data-reveal style="--d:.1s">{vision.text}</p>
+    </div>
+    <ol class="principles">
+      {vision.principles.map((p, i) => (
+        <li data-reveal style={`--d:${i * 0.1}s`}>
+          <span class="mono accent">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section class="reel container--wide" id="reel" aria-labelledby="reel-title">
+  <div class="reel__head container">
+    <p class="eyebrow">{reel.label}</p>
+    <h2 class="h2" id="reel-title">{reel.title}</h2>
+    <p class="reel__caption">{reel.caption}</p>
+  </div>
+  <div class="reel__player" data-reel={site.reelEmbed || undefined}>
+    <div class="reel__poster" aria-hidden="true">
+      <Media src={site.reelPoster} label="SHOWREEL — Vimeo / YouTube embed" />
+    </div>
+    <button type="button" class="reel__play" aria-label="Play showreel" data-reel-play>
+      <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"></path></svg>
+    </button>
+    <div class="reel__meta mono">
+      <span>Showreel {new Date().getFullYear()}</span>
+      <span>{site.reelRuntime ? `${site.reelRuntime} · Sound on` : 'Sound on'}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vision {
+    border-top: 1px solid var(--line);
+  }
+  .vision__eyebrow {
+    margin-bottom: 48px;
+  }
+  .vision__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+  }
+  .vision__left {
+    flex: 1 1 520px;
+  }
+  .vision__muted {
+    color: var(--faint);
+  }
+  .vision__text {
+    margin: 32px 0 0;
+    max-width: 560px;
+    color: var(--muted);
+  }
+  .principles {
+    flex: 1 1 380px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .principles li {
+    display: flex;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-2);
+  }
+  .principles h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .principles p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .reel {
+    padding-bottom: var(--section);
+  }
+  .reel__head {
+    margin-bottom: 40px;
+  }
+  .reel__caption {
+    max-width: 560px;
+    margin: 20px 0 0;
+    color: var(--muted);
+  }
+  .reel__player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-height: 760px;
+    width: 100%;
+    background: var(--bg-2);
+    overflow: hidden;
+  }
+  .reel__poster {
+    position: absolute;
+    inset: 0;
+  }
+  .reel__poster :global(.ph) {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 24px;
+    background-color: #120e0b;
+    background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 6px);
+  }
+  .reel__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    margin: -60px 0 0 -60px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    background: rgba(10, 9, 8, 0.6);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 0.5s var(--ease),
+      background 0.3s,
+      color 0.3s;
+  }
+  .reel__play:hover {
+    transform: scale(1.08);
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .reel__meta {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text-2);
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  .reel__player :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  @media (max-width: 640px) {
+    .reel__play {
+      width: 84px;
+      height: 84px;
+      margin: -42px 0 0 -42px;
+    }
+  }
+</style>

@@ -1,0 +1,220 @@
+---
+import { site, nav } from '../data/site';
+const path = Astro.url.pathname;
+---
+
+<header class="nav container">
+  <a href="/" class="nav__brand" aria-label={`${site.name} — home`}>
+    <span class="nav__dot" aria-hidden="true"></span>
+    <span class="nav__text">
+      <span class="nav__name">{site.name}</span>
+      <span class="nav__role mono">{site.shortRole}</span>
+    </span>
+  </a>
+
+  <nav class="nav__links mono" aria-label="Primary">
+    {nav.map((item) => (
+      <a href={item.href} aria-current={path.startsWith('/journal') && item.href === '/journal/' ? 'page' : undefined}>
+        {item.no} {item.label}
+      </a>
+    ))}
+  </nav>
+
+  <a href="/#contact" class="btn btn--outline-accent nav__cta">Start a project</a>
+
+  <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu" data-menu-toggle>
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="menu" id="menu" hidden data-menu>
+  <nav aria-label="Mobile">
+    <ol>
+      {nav.map((item) => (
+        <li>
+          <a href={item.href} data-menu-link><span class="mono">{item.no}</span>{item.label}</a>
+        </li>
+      ))}
+      <li><a href="/#contact" data-menu-link><span class="mono">06</span>Contact</a></li>
+    </ol>
+  </nav>
+  <a class="menu__mail mono" href={`mailto:${site.email}`}>{site.email}</a>
+</div>
+
+<style>
+  .nav {
+    position: relative;
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: 28px;
+  }
+  .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+  }
+  .nav__brand:hover {
+    color: var(--text);
+  }
+  .nav__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .nav__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .nav__name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .nav__role {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .nav__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .nav__links a {
+    position: relative;
+    padding-block: 12px;
+    color: var(--text-2);
+  }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__links a:hover,
+  .nav__links a[aria-current='page'],
+  .nav__links a.is-active {
+    color: var(--text);
+  }
+  .nav__links a:hover::after,
+  .nav__links a[aria-current='page']::after,
+  .nav__links a.is-active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .nav__cta {
+    font-size: 13px;
+    padding: 0 22px;
+  }
+  .nav__burger {
+    display: none;
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-3);
+    background: transparent;
+  }
+  .nav__burger span {
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    height: 1.5px;
+    background: var(--text);
+    transition: transform 0.35s var(--ease);
+  }
+  .nav__burger span:first-child {
+    top: 19px;
+  }
+  .nav__burger span:last-child {
+    top: 27px;
+  }
+  .nav__burger[aria-expanded='true'] span:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .nav__burger[aria-expanded='true'] span:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 120px var(--gutter) 40px;
+    background: var(--bg);
+    animation: menuIn 0.5s var(--ease);
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu a[data-menu-link] {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(36px, 10vw, 56px);
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .menu a .mono {
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .menu__mail {
+    font-size: 13px;
+  }
+  :global(body.menu-open) {
+    overflow: hidden;
+  }
+  @keyframes menuIn {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .nav__links,
+    .nav__cta {
+      display: none;
+    }
+    .nav__burger {
+      display: block;
+    }
+  }
+  @media (max-width: 520px) {
+    .nav__role {
+      display: none;
+    }
+  }
+</style>

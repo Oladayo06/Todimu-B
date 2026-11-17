@@ -1,0 +1,260 @@
+---
+import { site, hero } from '../data/site';
+import Media from './Media.astro';
+const heroSrc = site.heroVideo || site.heroPoster;
+---
+
+<section class="hero container--wide" id="top" aria-label="Introduction">
+  <div class="hero__letterbox">
+    <div class="hero__frame">
+      <div class="hero__media" aria-hidden="true">
+        {heroSrc ? <Media src={heroSrc} poster={site.heroPoster} eager /> : <div class="hero__glow" />}
+      </div>
+      <div class="hero__shade" aria-hidden="true"></div>
+
+      <span class="hero__label mono">[ {hero.label} ]</span>
+      <span class="hero__tc mono" aria-hidden="true" data-timecode>TC 00:00:00:00</span>
+
+      <div class="hero__copy">
+        <p class="eyebrow hero__arc">{hero.arc}</p>
+        <h1 class="hero__title display">
+          {hero.titleLines.map((line) => (<>{line}<br /></>))}
+          <span class="accent">{hero.titleAccent}</span>
+        </h1>
+        <p class="hero__text">{hero.text}</p>
+        <div class="hero__ctas">
+          <a href="#reel" class="btn btn--accent">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"></path></svg>
+            Watch showreel
+          </a>
+          <a href="#work" class="btn">Explore selected work</a>
+        </div>
+      </div>
+    </div>
+
+    <aside class="card" aria-label="Profile">
+      <div class="card__img">
+        <Media src={site.portrait} alt={site.shareImageAlt} label="PORTRAIT — on set, holding camera" eager />
+      </div>
+      <div class="card__row">
+        <div>
+          <p class="card__name display">{site.name}</p>
+          <p class="card__meta mono">{hero.card.role}</p>
+          <p class="card__meta mono">{hero.card.location}</p>
+        </div>
+      </div>
+      <span class="card__status mono"><i aria-hidden="true"></i>{hero.card.status}</span>
+    </aside>
+  </div>
+
+  <ul class="hero__strip mono" aria-label="What I do">
+    {hero.strip.map((s) => <li>{s}</li>)}
+    <li aria-hidden="true">Scroll ↓</li>
+  </ul>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-bottom: 80px;
+  }
+  .hero__letterbox {
+    position: relative;
+    background: #000;
+    padding-block: 56px;
+  }
+  .hero__frame {
+    position: relative;
+    min-height: 620px;
+    display: flex;
+    align-items: flex-end;
+    padding: 56px;
+    overflow: hidden;
+    background: var(--frame);
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 2px, transparent 2px 14px);
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__glow {
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse at 78% 30%, rgba(204, 85, 0, 0.22), transparent 55%),
+      radial-gradient(ellipse at 10% 90%, rgba(204, 85, 0, 0.08), transparent 50%);
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 9, 8, 0.85), rgba(10, 9, 8, 0.2) 55%, transparent);
+  }
+  .hero__label,
+  .hero__tc {
+    position: absolute;
+    top: 24px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    z-index: 2;
+  }
+  .hero__label {
+    left: 24px;
+    right: 200px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .hero__tc {
+    right: 24px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__copy {
+    position: relative;
+    z-index: 2;
+    max-width: 820px;
+  }
+  .hero__arc {
+    margin-bottom: 20px;
+  }
+  .hero__title {
+    font-size: clamp(52px, 7.4vw, 124px);
+    line-height: 0.92;
+    letter-spacing: 1px;
+  }
+  .hero__text {
+    margin: 28px 0 0;
+    max-width: 560px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .hero__ctas .btn {
+    min-height: 52px;
+  }
+
+  /* Floating portrait card */
+  .card {
+    position: absolute;
+    right: 64px;
+    top: 120px;
+    z-index: 3;
+    width: 280px;
+    padding: 14px 14px 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--line-3);
+    transform: rotate(3deg);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    transition: transform 0.6s var(--ease);
+  }
+  .card:hover {
+    transform: rotate(0deg) translateY(-6px);
+  }
+  .card__img {
+    height: 330px;
+    background: #2a211a;
+    overflow: hidden;
+  }
+  .card__img :global(.ph) {
+    background-color: #2a211a;
+    background-image: repeating-linear-gradient(45deg, rgba(204, 85, 0, 0.08) 0 2px, transparent 2px 12px);
+  }
+  .card__row {
+    margin-top: 14px;
+  }
+  .card__name {
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  .card__meta {
+    margin: 4px 0 0;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 6px 10px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  .card__status i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  .hero__strip {
+    list-style: none;
+    margin: 0;
+    padding: 18px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  @keyframes drift {
+    to {
+      transform: scale(1.12) translate(-3%, 2%);
+    }
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .hero__frame {
+      padding-right: 360px;
+    }
+  }
+  @media (max-width: 900px) {
+    .hero__letterbox {
+      padding-block: 32px;
+    }
+    .hero__frame {
+      min-height: 0;
+      padding: 72px 24px 32px;
+    }
+    .hero__label {
+      right: 24px;
+    }
+    .hero__tc {
+      display: none;
+    }
+    .card {
+      position: relative;
+      right: auto;
+      top: auto;
+      width: auto;
+      max-width: 340px;
+      margin: 24px auto 0;
+      transform: rotate(1.5deg);
+    }
+    .card__img {
+      height: auto;
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

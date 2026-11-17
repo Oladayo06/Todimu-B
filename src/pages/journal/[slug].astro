@@ -1,0 +1,303 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Media from '../../components/Media.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts, formatDate, readingTime, categorySlug, type Post } from '../../scripts/journal';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      newer: posts[i - 1] ?? null,
+      older: posts[i + 1] ?? null,
+      related: posts.filter((p) => p.id !== post.id && p.data.category === post.data.category).slice(0, 2),
+    },
+  }));
+}
+
+interface Props {
+  post: Post;
+  newer: Post | null;
+  older: Post | null;
+  related: Post[];
+}
+const { post, newer, older, related } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+const url = new URL(`/journal/${post.id}/`, Astro.site ?? site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: d.title,
+  description: d.excerpt,
+  datePublished: d.date.toISOString(),
+  dateModified: (d.updated ?? d.date).toISOString(),
+  author: { '@type': 'Person', name: site.name, url: site.url },
+  image: d.cover ? new URL(d.cover, url).href : undefined,
+  mainEntityOfPage: url,
+  keywords: d.tags.join(', '),
+};
+---
+
+<Base
+  title={`${d.title} — ${site.name}`}
+  description={d.excerpt}
+  image={d.cover || undefined}
+  imageAlt={d.coverAlt}
+  type="article"
+  published={d.date}
+  jsonLd={jsonLd}
+>
+  <article class="post">
+    <header class="post__head container">
+      <a href="/journal/" class="post__back mono">← Journal</a>
+      <p class="post__meta mono">
+        <a href={`/journal/category/${categorySlug(d.category)}/`}>{d.category}</a>
+        <span><time datetime={d.date.toISOString()}>{formatDate(d.date)}</time> · {readingTime(post.body)}</span>
+      </p>
+      <h1 class="display post__title">{d.title}</h1>
+      <p class="lead post__excerpt">{d.excerpt}</p>
+    </header>
+
+    <div class="container--wide">
+      <div class="post__cover">
+        <Media src={d.cover} alt={d.coverAlt ?? ''} label="COVER STILL — 2.39:1" eager />
+      </div>
+    </div>
+
+    <div class="post__body container">
+      <aside class="post__aside mono">
+        <p>Written by<br /><strong>{site.name}</strong></p>
+        {d.tags.length > 0 && (
+          <ul class="post__tags">{d.tags.map((t) => <li>#{t}</li>)}</ul>
+        )}
+        <button type="button" class="btn post__share" data-share>Share entry</button>
+      </aside>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="post__pager container mono" aria-label="More entries">
+      {older ? <a href={`/journal/${older.id}/`}><span>← Older</span>{older.data.title}</a> : <span />}
+      {newer && <a href={`/journal/${newer.id}/`} class="post__newer"><span>Newer →</span>{newer.data.title}</a>}
+    </nav>
+
+    {related.length > 0 && (
+      <section class="post__related container" aria-labelledby="related-title">
+        <h2 class="eyebrow eyebrow--dim" id="related-title">More in {d.category}</h2>
+        <div class="post__related-grid">{related.map((p, i) => <PostCard post={p} index={i} />)}</div>
+      </section>
+    )}
+
+    <section class="post__cta container">
+      <p class="display">Have a story to tell?</p>
+      <a href="/#contact" class="btn btn--accent">Send a project brief</a>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .post__head {
+    padding-top: 40px;
+    padding-bottom: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .post__back {
+    display: inline-block;
+    margin: 32px 0 40px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 0 0 20px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .post__title {
+    max-width: 1000px;
+    font-size: clamp(44px, 7vw, 104px);
+    line-height: 0.95;
+  }
+  .post__excerpt {
+    max-width: 680px;
+    margin: 28px 0 0;
+  }
+  .post__cover {
+    aspect-ratio: 2.39 / 1;
+    min-height: 220px;
+    background: #000;
+    overflow: hidden;
+  }
+  .post__body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    padding-block: 80px;
+  }
+  .post__aside {
+    flex: 0 1 220px;
+    font-size: 12px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .post__aside p {
+    margin: 0 0 20px;
+    line-height: 1.8;
+  }
+  .post__aside strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .post__tags {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    color: var(--accent);
+  }
+  .post__share {
+    font-size: 12px;
+    min-height: 44px;
+    padding: 0 18px;
+  }
+  .post__pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 32px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .post__pager a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 45%;
+    color: var(--text);
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  .post__pager a span {
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .post__newer {
+    text-align: right;
+    margin-left: auto;
+  }
+  .post__related {
+    padding-top: 80px;
+  }
+  .post__related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 40px 24px;
+  }
+  .post__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding-block: 100px;
+  }
+  .post__cta .display {
+    margin: 0;
+    font-size: clamp(36px, 5vw, 64px);
+  }
+
+  /* Markdown body */
+  .prose {
+    flex: 1 1 560px;
+    max-width: 720px;
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text-2);
+  }
+  .prose :global(> :first-child) {
+    margin-top: 0;
+  }
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 24px;
+  }
+  .prose :global(h2) {
+    margin: 56px 0 18px;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3.4vw, 42px);
+    line-height: 1.05;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .prose :global(h3) {
+    margin: 40px 0 12px;
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .prose :global(strong) {
+    color: var(--text);
+  }
+  .prose :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose :global(li) {
+    margin-bottom: 8px;
+  }
+  .prose :global(li::marker) {
+    color: var(--accent);
+  }
+  .prose :global(blockquote) {
+    margin: 48px 0;
+    padding-left: 28px;
+    border-left: 2px solid var(--accent);
+    font-family: var(--font-display);
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .prose :global(blockquote p) {
+    margin: 0;
+  }
+  .prose :global(img) {
+    width: 100%;
+    height: auto;
+    margin: 40px 0;
+  }
+  .prose :global(hr) {
+    margin: 56px 0;
+    border: 0;
+    border-top: 1px solid var(--line-2);
+  }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--accent-hi);
+  }
+  @media (max-width: 760px) {
+    .post__aside {
+      order: 2;
+      flex-basis: 100%;
+    }
+    .post__body {
+      padding-block: 56px;
+    }
+  }
+</style>

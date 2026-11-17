@@ -1,0 +1,172 @@
+---
+import { site, contact } from '../data/site';
+---
+
+<section class="contact section container" id="contact" aria-labelledby="contact-title">
+  <div class="contact__left">
+    <p class="eyebrow">{contact.label}</p>
+    <h2 class="contact__title display" id="contact-title">
+      {contact.titleLines.map((l) => (<>{l}<br /></>))}
+      <span class="accent">{contact.titleAccent}</span>
+    </h2>
+    <p class="contact__text">{contact.text}</p>
+
+    <dl class="contact__list">
+      <div>
+        <dt class="mono">Direct email</dt>
+        <dd><a href={`mailto:${site.email}`} class="contact__email">{site.email}</a></dd>
+      </div>
+      <div>
+        <dt class="mono">Portfolio</dt>
+        <dd><a href={site.portfolio} target="_blank" rel="noopener noreferrer">linktr.ee/tothemu_portfolio</a></dd>
+      </div>
+      <div>
+        <dt class="mono">IMDb</dt>
+        <dd><a href={site.imdb} target="_blank" rel="noopener noreferrer">imdb.com/name/nm16424644</a></dd>
+      </div>
+      <div>
+        <dt class="mono">Location</dt>
+        <dd>{site.location}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <form class="form" data-contact-form data-key={site.web3formsKey} data-email={site.email} data-success={contact.success} novalidate>
+    <input type="hidden" name="subject" value={`New project enquiry — ${site.name} website`} />
+    <input type="hidden" name="from_name" value={`${site.name} website`} />
+    <!-- Spam trap: real visitors never see or fill this -->
+    <input type="checkbox" name="botcheck" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <label>
+      <span class="mono">Name</span>
+      <input name="name" type="text" autocomplete="name" required />
+    </label>
+    <label>
+      <span class="mono">Email</span>
+      <input name="email" type="email" autocomplete="email" required />
+    </label>
+    <label>
+      <span class="mono">Production / project type</span>
+      <select name="project_type">
+        {contact.projectTypes.map((t) => <option>{t}</option>)}
+      </select>
+    </label>
+    <label>
+      <span class="mono">Proposed dates</span>
+      <input name="dates" type="text" placeholder="e.g. Spring 2027, 10 shoot days" />
+    </label>
+    <label>
+      <span class="mono">Brief / message</span>
+      <textarea name="message" rows="5" required></textarea>
+    </label>
+    <button type="submit" class="btn btn--accent form__submit">{contact.cta}</button>
+    <p class="form__status mono" role="status" aria-live="polite" data-form-status></p>
+  </form>
+</section>
+
+<style>
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+    padding-bottom: 80px;
+  }
+  .contact__left {
+    flex: 1 1 480px;
+  }
+  .contact__title {
+    margin-bottom: 28px;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.95;
+  }
+  .contact__text {
+    max-width: 520px;
+    margin: 0 0 40px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text-2);
+  }
+  .contact__list {
+    margin: 0;
+    display: grid;
+    gap: 24px;
+  }
+  .contact__list dt {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .contact__list dd {
+    margin: 0;
+    font-size: 17px;
+    word-break: break-word;
+  }
+  .contact__email {
+    font-size: 22px;
+  }
+  .form {
+    flex: 1 1 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form label > span {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .form input:not([type='checkbox']),
+  .form select,
+  .form textarea {
+    min-height: 48px;
+    padding: 8px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line-3);
+    border-radius: 0;
+    color: var(--text);
+    font: inherit;
+    font-size: 16px;
+    transition: border-color 0.25s;
+  }
+  .form select {
+    background: var(--bg);
+  }
+  .form textarea {
+    resize: vertical;
+  }
+  .form input:focus,
+  .form select:focus,
+  .form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .form ::placeholder {
+    color: var(--faint);
+  }
+  .form [aria-invalid='true'] {
+    border-color: #e0442b !important;
+  }
+  .form__submit {
+    align-self: flex-start;
+    min-height: 52px;
+    padding: 0 32px;
+  }
+  .form__submit[disabled] {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .form__status {
+    margin: 0;
+    min-height: 1.5em;
+    font-size: 12px;
+    color: var(--accent-hi);
+  }
+</style>

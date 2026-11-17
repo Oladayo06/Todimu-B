@@ -1,0 +1,52 @@
+---
+import { testimonial as t } from '../data/site';
+const hasQuote = t.quote.trim().length > 0;
+---
+
+<section class="quote" aria-label={hasQuote ? 'Testimonial' : 'Collaboration'}>
+  <figure class="quote__inner" data-reveal>
+    {hasQuote ? (
+      <>
+        <blockquote class="display">“{t.quote}”</blockquote>
+        <figcaption class="mono">{t.name} — {t.project}</figcaption>
+      </>
+    ) : (
+      <>
+        <p class="display quote__big">{t.fallbackTitle}</p>
+        <figcaption class="quote__text">{t.fallbackText}</figcaption>
+      </>
+    )}
+  </figure>
+</section>
+
+<style>
+  .quote {
+    border-block: 1px solid var(--line);
+  }
+  .quote__inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 100px var(--gutter);
+    text-align: center;
+  }
+  blockquote,
+  .quote__big {
+    margin: 0;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.15;
+  }
+  figcaption.mono {
+    margin-top: 28px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .quote__text {
+    max-width: 620px;
+    margin: 24px auto 0;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+</style>

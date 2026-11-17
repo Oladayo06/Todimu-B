@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import JournalIndex from '../../components/JournalIndex.astro';
+import { getPosts } from '../../scripts/journal';
+import { site } from '../../data/site';
+
+const posts = await getPosts();
+const used = [...new Set(posts.map((p) => p.data.category))];
+---
+
+<Base
+  title={`Journal — ${site.name}`}
+  description="Notes on story, production, editing and life on set from filmmaker Todimu Adegoke."
+>
+  <JournalIndex posts={posts} usedCategories={used} />
+</Base>

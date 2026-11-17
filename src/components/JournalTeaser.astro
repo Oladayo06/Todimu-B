@@ -1,0 +1,37 @@
+---
+// "From the Journal" strip on the home page — latest 3 posts
+import { getPosts } from '../scripts/journal';
+import PostCard from './PostCard.astro';
+const posts = (await getPosts()).slice(0, 3);
+---
+
+{posts.length > 0 && (
+  <section class="teaser section container" aria-labelledby="journal-title">
+    <div class="teaser__head">
+      <div>
+        <p class="eyebrow">Behind the frame — Journal</p>
+        <h2 class="h2" id="journal-title">From the journal</h2>
+      </div>
+      <a href="/journal/" class="btn">All entries →</a>
+    </div>
+    <div class="teaser__grid">
+      {posts.map((post, i) => <PostCard post={post} index={i} />)}
+    </div>
+  </section>
+)}
+
+<style>
+  .teaser__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .teaser__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 40px 24px;
+  }
+</style>

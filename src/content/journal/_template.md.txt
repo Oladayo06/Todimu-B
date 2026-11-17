@@ -1,0 +1,18 @@
+---
+title: Post title (max 90 characters)
+excerpt: One or two sentences shown on cards and in search results (max 220 characters).
+date: 2026-12-01
+category: Behind the Scenes   # News | Process | Behind the Scenes | Craft & Training
+tags: [Tag one, Tag two]
+cover: /media/journal/your-image.jpg
+coverAlt: Describe the image for screen readers
+draft: true                   # set to false (or delete the line) to publish
+---
+
+Write the post here in Markdown.
+
+## Use H2 for section headings
+
+Paragraphs, **bold**, *italics*, [links](https://example.com), lists and > quotes all work.
+
+![Alt text for an inline image](/media/journal/inline.jpg)

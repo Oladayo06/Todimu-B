@@ -1,0 +1,41 @@
+---
+import { site } from '../data/site';
+const socials = site.socials.filter((s) => s.href);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer container mono">
+  <span>© {year} {site.name}. All rights reserved.</span>
+  <nav class="footer__links" aria-label="Social">
+    {socials.map((s) => (
+      <a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a>
+    ))}
+    <a href="/journal/rss.xml">RSS</a>
+  </nav>
+  <a href="#top" class="footer__top">Back to top ↑</a>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: 32px 48px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer__top {
+    color: var(--dim);
+  }
+  .footer__top:hover {
+    color: var(--text);
+  }
+</style>

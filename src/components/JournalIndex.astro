@@ -1,0 +1,97 @@
+---
+// Shared layout for /journal/ and /journal/category/<slug>/
+import type { Post } from '../scripts/journal';
+import { categorySlug } from '../scripts/journal';
+import { categories } from '../content.config';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: Post[];
+  active?: string; // category name, or undefined for "All"
+  usedCategories: string[];
+}
+const { posts, active, usedCategories } = Astro.props;
+const tabs = categories.filter((c) => usedCategories.includes(c));
+---
+
+<section class="journal section container">
+  <header class="journal__head">
+    <p class="eyebrow">Behind the frame — Journal</p>
+    <h1 class="display journal__title">{active ?? 'Journal'}</h1>
+    <p class="lead journal__intro">
+      Notes on story, production, the edit and life on set — news, process and behind-the-scenes from current work.
+    </p>
+  </header>
+
+  <nav class="journal__tabs mono" aria-label="Journal categories">
+    <a href="/journal/" aria-current={!active ? 'page' : undefined}>All</a>
+    {tabs.map((c) => (
+      <a href={`/journal/category/${categorySlug(c)}/`} aria-current={active === c ? 'page' : undefined}>{c}</a>
+    ))}
+    <a href="/journal/rss.xml" class="journal__rss">RSS</a>
+  </nav>
+
+  {posts.length ? (
+    <div class="journal__grid">
+      {posts.map((post, i) => <PostCard post={post} index={i} headingLevel="h2" />)}
+    </div>
+  ) : (
+    <p class="journal__empty mono">No entries yet — check back soon.</p>
+  )}
+</section>
+
+<style>
+  .journal {
+    padding-top: 40px;
+  }
+  .journal__head {
+    border-top: 1px solid var(--line);
+    padding-top: 48px;
+  }
+  .journal__title {
+    font-size: clamp(64px, 11vw, 160px);
+    line-height: 0.9;
+  }
+  .journal__intro {
+    max-width: 620px;
+    margin: 24px 0 0;
+    color: var(--muted);
+  }
+  .journal__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 48px 0;
+  }
+  .journal__tabs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--line-3);
+    font-size: 12px;
+    color: var(--text-2);
+    text-transform: uppercase;
+  }
+  .journal__tabs a:hover {
+    border-color: var(--text-2);
+  }
+  .journal__tabs a[aria-current='page'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .journal__tabs .journal__rss {
+    margin-left: auto;
+    border-color: transparent;
+    color: var(--dim);
+  }
+  .journal__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 56px 24px;
+  }
+  .journal__empty {
+    color: var(--dim);
+  }
+</style>

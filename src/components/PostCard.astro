@@ -1,0 +1,93 @@
+---
+// One Journal post card — used on the home teaser and the Journal pages
+import type { CollectionEntry } from 'astro:content';
+import Media from './Media.astro';
+import { formatDate, readingTime, categorySlug } from '../scripts/journal';
+
+interface Props {
+  post: CollectionEntry<'journal'>;
+  index?: number;
+  headingLevel?: 'h2' | 'h3';
+}
+const { post, index = 0, headingLevel: H = 'h3' } = Astro.props;
+const { title, excerpt, date, category, cover, coverAlt } = post.data;
+---
+
+<article class="post-card" data-reveal style={`--d:${(index % 3) * 0.08}s`} data-category={categorySlug(category)}>
+  <a href={`/journal/${post.id}/`} class="post-card__link">
+    <div class="post-card__frame">
+      <Media src={cover} alt={coverAlt ?? ''} label="COVER STILL" />
+      <span class="post-card__no mono">JN.{String(index + 1).padStart(2, '0')}</span>
+    </div>
+    <p class="post-card__meta mono">
+      <span class="accent">{category}</span>
+      <span>{formatDate(date)} · {readingTime(post.body)}</span>
+    </p>
+    <H class="post-card__title display">{title}</H>
+    <p class="post-card__excerpt">{excerpt}</p>
+    <span class="post-card__more mono">Read entry →</span>
+  </a>
+</article>
+
+<style>
+  .post-card__link {
+    display: block;
+    color: var(--text);
+  }
+  .post-card__link:hover {
+    color: var(--text);
+  }
+  .post-card__frame {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .post-card__frame :global(.media),
+  .post-card__frame :global(.ph) {
+    transition: transform 1s var(--ease);
+  }
+  .post-card__link:hover .post-card__frame :global(.media),
+  .post-card__link:hover .post-card__frame :global(.ph) {
+    transform: scale(1.05);
+  }
+  .post-card__no {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 10px;
+    color: var(--accent);
+  }
+  .post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 16px 0 0;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .post-card__title {
+    margin-top: 10px;
+    font-size: 26px;
+    line-height: 1.05;
+  }
+  .post-card__excerpt {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .post-card__more {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    transition: transform 0.4s var(--ease);
+  }
+  .post-card__link:hover .post-card__more {
+    transform: translateX(6px);
+  }
+</style>

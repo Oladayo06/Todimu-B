@@ -1,0 +1,22 @@
+---
+import Base from '../../../layouts/Base.astro';
+import JournalIndex from '../../../components/JournalIndex.astro';
+import { getPosts, categorySlug, type Post } from '../../../scripts/journal';
+import { site } from '../../../data/site';
+
+// One page per category that has at least one post
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const used = [...new Set(posts.map((p) => p.data.category))];
+  return used.map((name) => ({
+    params: { category: categorySlug(name) },
+    props: { name, posts: posts.filter((p) => p.data.category === name), used },
+  }));
+}
+
+const { name, posts, used } = Astro.props as { name: string; posts: Post[]; used: string[] };
+---
+
+<Base title={`${name} — Journal — ${site.name}`} description={`${name} entries from the journal of filmmaker ${site.name}.`}>
+  <JournalIndex posts={posts} active={name} usedCategories={used} />
+</Base>
